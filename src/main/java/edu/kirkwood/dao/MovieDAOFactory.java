@@ -1,5 +1,6 @@
 package edu.kirkwood.dao;
 
+import edu.kirkwood.dao.impl.MySQLMovieDAO;
 import edu.kirkwood.dao.impl.XmlMovieDAO;
 
 import java.io.FileNotFoundException;
@@ -39,8 +40,12 @@ public class MovieDAOFactory {
                 return new XmlMovieDAO(apiURL);
 //            case "JSON":
 //                break;
-//            case "MYSQL":
-//                break;
+            case "MYSQL":
+                String connectionString = properties.getProperty("mysql.connectionString");
+                if(connectionString == null || connectionString.isEmpty()) {
+                    throw new IllegalArgumentException("mysql.connectionString is required");
+                }
+                return new MySQLMovieDAO(connectionString);
 //            case "MONGODB":
 //                break;
             default:

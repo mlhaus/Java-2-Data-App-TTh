@@ -1,12 +1,13 @@
 package edu.kirkwood.model.xml;
 
+import edu.kirkwood.model.Movie;
 import jakarta.xml.bind.annotation.*;
 
 /**
  * This class handles the result XML element from the OMDB API
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public class MovieSearchResult {
+public class MovieSearchResult extends Movie {
     @XmlAttribute(name = "imdbID")
     private String id;
     @XmlAttribute(name = "title")

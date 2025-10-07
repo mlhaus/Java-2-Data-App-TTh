@@ -18,7 +18,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
-public class XmlMovieDAO implements MovieDAO {
+public class XmlMovieDAO implements MovieDAO<MovieSearchResult> {
     private String apiURL;
 
     public XmlMovieDAO(String apiURL) {
