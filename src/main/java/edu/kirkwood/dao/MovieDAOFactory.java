@@ -41,11 +41,7 @@ public class MovieDAOFactory {
 //            case "JSON":
 //                break;
             case "MYSQL":
-                String connectionString = properties.getProperty("mysql.connectionString");
-                if(connectionString == null || connectionString.isEmpty()) {
-                    throw new IllegalArgumentException("mysql.connectionString is required");
-                }
-                return new MySQLMovieDAO(connectionString);
+                return new MySQLMovieDAO();
 //            case "MONGODB":
 //                break;
             default:

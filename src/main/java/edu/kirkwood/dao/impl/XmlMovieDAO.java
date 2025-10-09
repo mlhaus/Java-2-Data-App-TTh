@@ -1,6 +1,7 @@
 package edu.kirkwood.dao.impl;
 
 import edu.kirkwood.dao.MovieDAO;
+import edu.kirkwood.model.Movie;
 import edu.kirkwood.model.xml.MovieSearchResult;
 import edu.kirkwood.model.xml.OmdbMovieResponse;
 import jakarta.xml.bind.JAXBContext;
@@ -18,7 +19,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
-public class XmlMovieDAO implements MovieDAO<MovieSearchResult> {
+public class XmlMovieDAO implements MovieDAO {
     private String apiURL;
 
     public XmlMovieDAO(String apiURL) {
@@ -30,8 +31,7 @@ public class XmlMovieDAO implements MovieDAO<MovieSearchResult> {
      * @param title The movie title a user is searching for
      * @return A list of movies that matches the search title
      */
-    @Override
-    public List<MovieSearchResult> search(String title) {
+    public List<MovieSearchResult> fetch(String title) {
         if(apiURL == null || apiURL.isEmpty()) {
             throw new IllegalArgumentException("apiURL cannot be null or empty");
         }
@@ -79,10 +79,9 @@ public class XmlMovieDAO implements MovieDAO<MovieSearchResult> {
         return movieResponse;
     }
 
-
-//    public static void main(String[] args) {
-//        String apiURL = "https://www.omdbapi.com/?type=movie&apikey=359a6530&r=xml";
-//        XmlMovieDAO movieDAO = new XmlMovieDAO(apiURL);
-//        movieDAO.search("Batman").forEach(System.out::println);
-//    }
+    @Override
+    public List<Movie> search(String title) {
+        return List.of();
+    }
+    
 }

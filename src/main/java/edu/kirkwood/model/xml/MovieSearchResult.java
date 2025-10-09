@@ -7,7 +7,7 @@ import jakarta.xml.bind.annotation.*;
  * This class handles the result XML element from the OMDB API
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public class MovieSearchResult extends Movie {
+public class MovieSearchResult {
     @XmlAttribute(name = "imdbID")
     private String id;
     @XmlAttribute(name = "title")

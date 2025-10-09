@@ -3,7 +3,7 @@ package edu.kirkwood.dao;
 import java.sql.Connection;
 
 public class MySQLConnection {
-    public static Connection getConnection(String connectionString) {
+    public static Connection getConnection() {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
         } catch (ClassNotFoundException e) {

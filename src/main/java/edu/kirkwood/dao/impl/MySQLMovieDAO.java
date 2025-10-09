@@ -1,7 +1,7 @@
 package edu.kirkwood.dao.impl;
 
 import edu.kirkwood.dao.MovieDAO;
-import edu.kirkwood.model.mysql.MovieMySQL;
+import edu.kirkwood.model.Movie;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -9,17 +9,12 @@ import java.util.List;
 
 import static edu.kirkwood.dao.MySQLConnection.getConnection;
 
-public class MySQLMovieDAO implements MovieDAO<MovieMySQL> {
-    private String connectionString;
-
-    public MySQLMovieDAO(String connectionString) {
-        this.connectionString = connectionString;
-    }
+public class MySQLMovieDAO implements MovieDAO {
     
     @Override
-    public List<MovieMySQL> search(String title) {
+    public List<Movie> search(String title) {
         // try-with-resources
-        try(Connection connection = getConnection(connectionString)) {
+        try(Connection connection = getConnection()) {
             
         } catch (SQLException e) {
             throw new RuntimeException(e);
