@@ -29,7 +29,27 @@ public class XmlMovieDAO implements MovieDAO {
     /**
      * Retrieves all movies from the data source that matches the title
      * @param title The movie title a user is searching for
-     * @return A list of movies that matches the search title
+     * @return A List<Movie> movies that matches the search title
+     */
+    @Override
+    public List<Movie> search(String title) {
+        List<MovieSearchResult> results = fetch(title);
+        List<Movie> movies = new ArrayList<>();
+        results.forEach(result -> {
+            Movie movie = new Movie();
+            movie.setId(result.getId());
+            movie.setTitle(result.getTitle());
+            movie.setYear(result.getYear());
+            // The XML data source does not include a plot
+            movies.add(movie);
+        });
+        return movies;
+    }
+
+    /**
+     * Retrieves all movies from the data source that matches the title
+     * @param title The movie title a user is searching for
+     * @return A List<MovieSearchResult> movies that matches the search title
      */
     public List<MovieSearchResult> fetch(String title) {
         if(apiURL == null || apiURL.isEmpty()) {
@@ -42,7 +62,6 @@ public class XmlMovieDAO implements MovieDAO {
         List<MovieSearchResult> results = new ArrayList<>();
         boolean finished = false;
         while(!finished) {
-            System.out.println(fullURL);
             try {
                 HttpRequest request = HttpRequest.newBuilder()
                         .uri(URI.create(fullURL))
@@ -79,9 +98,4 @@ public class XmlMovieDAO implements MovieDAO {
         return movieResponse;
     }
 
-    @Override
-    public List<Movie> search(String title) {
-        return List.of();
-    }
-    
 }
