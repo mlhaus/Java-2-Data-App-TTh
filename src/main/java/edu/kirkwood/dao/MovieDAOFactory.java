@@ -1,5 +1,6 @@
 package edu.kirkwood.dao;
 
+import edu.kirkwood.dao.impl.JsonMovieDAO;
 import edu.kirkwood.dao.impl.MySQLMovieDAO;
 import edu.kirkwood.dao.impl.XmlMovieDAO;
 
@@ -38,8 +39,16 @@ public class MovieDAOFactory {
                     throw new IllegalArgumentException("xml.apiURL is required");
                 }
                 return new XmlMovieDAO(apiURL);
-//            case "JSON":
-//                break;
+            case "JSON":
+                String jsonApiURL = properties.getProperty("json.apiURL");
+                if(jsonApiURL == null || jsonApiURL.isEmpty()) {
+                    throw new IllegalArgumentException("json.apiURL is required");
+                }
+                String jsonAccessToken = properties.getProperty("json.apiReadAccessToken");
+                if(jsonAccessToken == null || jsonAccessToken.isEmpty()) {
+                    throw new IllegalArgumentException("json.apiReadAccessToken is required");
+                }
+                return new JsonMovieDAO(jsonApiURL, jsonAccessToken);
             case "MYSQL":
                 return new MySQLMovieDAO();
 //            case "MONGODB":

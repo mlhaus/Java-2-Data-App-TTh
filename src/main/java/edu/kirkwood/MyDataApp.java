@@ -2,6 +2,7 @@ package edu.kirkwood;
 
 import edu.kirkwood.dao.MovieDAO;
 import edu.kirkwood.dao.MovieDAOFactory;
+import edu.kirkwood.dao.impl.JsonMovieDAO;
 import edu.kirkwood.dao.impl.MySQLMovieDAO;
 import edu.kirkwood.dao.impl.XmlMovieDAO;
 import edu.kirkwood.model.Movie;
@@ -21,6 +22,9 @@ public class MyDataApp {
             results = xmlMovieDAO.search(title);
         } else if(movieDAO instanceof MySQLMovieDAO) {
             MySQLMovieDAO mySQLMovieDAO = (MySQLMovieDAO) movieDAO;
+            results = mySQLMovieDAO.search(title);
+        } else if(movieDAO instanceof JsonMovieDAO) {
+            JsonMovieDAO mySQLMovieDAO = (JsonMovieDAO) movieDAO;
             results = mySQLMovieDAO.search(title);
         }
         results.forEach(System.out::println);
