@@ -1,16 +1,17 @@
 package edu.kirkwood.dao.impl;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
+import com.google.gson.*;
+import edu.kirkwood.dao.JsonTypeAdapter;
 import edu.kirkwood.dao.MovieDAO;
 import edu.kirkwood.model.Movie;
+import edu.kirkwood.model.json.TmdbMovieResponse;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 public class JsonMovieDAO implements MovieDAO {
@@ -21,10 +22,16 @@ public class JsonMovieDAO implements MovieDAO {
         this.apiToken = apiToken;
     }
 
-    public String getRawData(String title) {
+    /**
+     * Get raw data from themoviedb API
+     * @param title The movie title to search for
+     * @param page The page number to search for
+     * @return A json String containing all matching movies
+     */
+    public String getRawData(String title, int page) {
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder()
-                .url(apiURL + "query=" + title) // Todo: Add page number
+                .url(apiURL + "query=" + title + "&page=" + page)
                 .get()
                 .addHeader("accept", "application/json")
                 .addHeader("Authorization", "Bearer " + apiToken)
@@ -42,11 +49,44 @@ public class JsonMovieDAO implements MovieDAO {
 
     @Override
     public List<Movie> search(String title) {
-        String rawData = getRawData(title);
-        System.out.println(prettyFormatter(rawData));
-        return List.of();
+        List<Movie> movies = new ArrayList<>();
+        int currentPage = 1;
+        while(true) {
+            String rawData = getRawData(title, currentPage);
+//        System.out.println(prettyFormatter(rawData));
+            Gson gson = new GsonBuilder()
+                    .registerTypeAdapter(LocalDate.class, new JsonTypeAdapter.LocalDateDeserializer())
+                    .create();
+            TmdbMovieResponse movieResponse = null;
+            try {
+                movieResponse = gson.fromJson(rawData, TmdbMovieResponse.class);
+            } catch (JsonSyntaxException e) {
+                throw new RuntimeException(e);
+            }
+            movieResponse.getResults().forEach(result -> {
+                Movie movie = new Movie();
+                movie.setId(result.getId());
+                movie.setTitle(result.getTitle());
+                if (result.getRelease_date() != null) {
+                    movie.setYear(result.getRelease_date().getYear());
+                }
+                movie.setPlot(result.getOverview());
+                movies.add(movie);
+            });
+            if(movieResponse.getTotal_pages() > currentPage) {
+                currentPage++;
+            } else {
+                break;
+            }
+        }
+        return movies;
     }
-    
+
+    /**
+     * To format raw json data into a human-readable format
+     * @param rawData The unformatted json data
+     * @return A human read String of json
+     */
     public String prettyFormatter(String rawData) {
         Gson gson = new GsonBuilder()
                 .setPrettyPrinting()
