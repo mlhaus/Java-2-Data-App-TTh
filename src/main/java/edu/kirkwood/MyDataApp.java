@@ -2,10 +2,14 @@ package edu.kirkwood;
 
 import edu.kirkwood.dao.MovieDAO;
 import edu.kirkwood.dao.MovieDAOFactory;
+import edu.kirkwood.dao.MusicDAO;
+import edu.kirkwood.dao.MusicDAOFactory;
 import edu.kirkwood.dao.impl.JsonMovieDAO;
 import edu.kirkwood.dao.impl.MySQLMovieDAO;
 import edu.kirkwood.dao.impl.XmlMovieDAO;
+import edu.kirkwood.dao.impl.XmlMusicDAO;
 import edu.kirkwood.model.Movie;
+import edu.kirkwood.model.Music;
 import edu.kirkwood.model.xml.MovieSearchResult;
 import edu.kirkwood.view.Animation;
 
@@ -23,9 +27,12 @@ import static edu.kirkwood.view.UserInput.getString;
 
 public class MyDataApp {
     public static void main(String[] args) {
-        String title = getString("Enter a movie title", true);
-        List<Movie> results = getResults(title);
-        sortByMenu(results, title);
+        String title = getString("Enter a song title", true);
+        List<Music> results = getMusicResults(title);
+        results.forEach(System.out::println);
+//        String title = getString("Enter a movie title", true);
+//        List<Movie> results = getResults(title);
+//        sortByMenu(results, title);
     }
 
     public static void sortByMenu(List<Movie> results, String title) {
@@ -70,6 +77,35 @@ public class MyDataApp {
             printList("Search for '" + title + "'", results, 10);
             pressEnterToContinue();
         }
+    }
+
+    public static List<Music> getMusicResults(String title) {
+        Animation animation = new Animation("Searching for data. Please wait");
+        Thread animationThread = new Thread(animation);
+        animationThread.start(); // triggers the Animation run()
+
+        MusicDAO musicDAO = MusicDAOFactory.getMusicDAO();
+        List<Music> results = new ArrayList<>();
+        if(musicDAO instanceof XmlMusicDAO) {
+            XmlMusicDAO xmlMusicDAO = (XmlMusicDAO) musicDAO;
+            results = xmlMusicDAO.search(title);
+        }
+//        else if(movieDAO instanceof MySQLMovieDAO) {
+//            MySQLMovieDAO mySQLMovieDAO = (MySQLMovieDAO) movieDAO;
+//            results = mySQLMovieDAO.search(title);
+//        } else if(movieDAO instanceof JsonMovieDAO) {
+//            JsonMovieDAO mySQLMovieDAO = (JsonMovieDAO) movieDAO;
+//            results = mySQLMovieDAO.search(title);
+//        }
+
+        animation.stopAnimation();
+        try {
+            animationThread.join(); // Wait for the animation to finish before continuing
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+        return results;
     }
 
     public static List<Movie> getResults(String title) {
